@@ -11,8 +11,22 @@ def typeSim(element, text, delay=0.05):
         for character in text:
                 ActionChains(driver).move_to_element(element).click().send_keys(character).perform()
                 time.sleep(delay)
+
+#⚠️REMOVE DEFAULT VALUE FOR QUERY⚠️
+def blinksearch(query="Aloo Bhujia"):
+        driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[1]/header/div[2]/a/div[2]/div').click()
+        searchbar=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[1]/header/div[2]/div/input')
+        searchbar.clear()
+        searchbar.send_keys(query)
+        pickfirst()
+        
+        
+        
+
+def pickfirst():
+        print("First item: ",driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[1]/div[1]').text)
+        
 pinCode= input("Enter Pincode : ")
-productName = input("Enter Product Name : ")
 driver = webdriver.Firefox()
 driver.get("https://blinkit.com")
 driver.implicitly_wait(2)
@@ -32,14 +46,7 @@ try:
         EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div/div')))
 
     print("Sorry for the inconvenience, Blinkit doesn't deliver at your location.")
+    driver.quit()
 except (TimeoutException, NoSuchElementException):
-                pass
-
-    
-searchIcon = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/a/div[1]')
-searchIcon.click()
-searchBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div/input')
-searchBar.send_keys(productName)
-searchBar.send_keys(Keys.RETURN)
-
-
+                print("delivery available at your pincode")
+                blinksearch()
