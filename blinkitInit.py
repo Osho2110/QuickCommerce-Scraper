@@ -12,6 +12,7 @@ def typeSim(element, text, delay=0.05):
                 ActionChains(driver).move_to_element(element).click().send_keys(character).perform()
                 time.sleep(delay)
 pinCode= input("Enter Pincode : ")
+productName = input("Enter Product Name : ")
 driver = webdriver.Firefox()
 driver.get("https://blinkit.com")
 driver.implicitly_wait(2)
@@ -35,3 +36,10 @@ except (TimeoutException, NoSuchElementException):
                 pass
 
     
+searchIcon = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/a/div[1]')
+searchIcon.click()
+searchBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div/input')
+searchBar.send_keys(productName)
+searchBar.send_keys(Keys.RETURN)
+
+
