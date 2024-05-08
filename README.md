@@ -1,3 +1,4 @@
-Use this branch to implement temporary ideas.
-
-Once finalised, merge to main
+(/assets/MercuryLogo.png)
+#Mercury: A Quick Commerce Scraper
+###Currently Supported Sites: 
+* Blinkit
