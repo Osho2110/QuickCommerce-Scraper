@@ -1,4 +1,4 @@
-![Logo](/assets/MercuryLogo.png){:.centered}
+![Logo](/assets/MercuryLogo.png)
 
 # Mercury: A Quick Commerce Scraper
 ### Currently Supported Sites: 
