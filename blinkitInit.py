@@ -42,7 +42,12 @@ def BlinkfirstResult():
         print(BlinkR1OP)
 
 
-pinCode= input("Enter Pincode : ")
+while True:
+    pincode = input("Enter Pincode : ")
+    if pincode.isdigit():
+        break  
+    else:
+        print("Invalid Pincode. Please enter only digits.")
 productName = input("Enter Product Name : ")
 driver = webdriver.Firefox()
 driver.get("https://blinkit.com")
@@ -50,11 +55,11 @@ driver.implicitly_wait(2)
 
 addressBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div/input')
 addressBar.clear()
-typeSim(addressBar, pinCode[:3])
+typeSim(addressBar, pincode[:3])
 
 reAddressBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[1]/div/div/div/div[2]/div[2]/div/div[2]/div/div/div/input')
-typeSim(reAddressBar, pinCode[-3:])
-
+typeSim(reAddressBar, pincode[-3:])
+time.sleep(1)
 addressSuggestion = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div[1]/div[2]/div[1]')
 addressSuggestion.click()
 
