@@ -28,29 +28,79 @@ def blinkResultCross():
     except TimeoutException:
         print("Element not clickable within timeout.")
 
+# XPATH combinations - 
+re1 = "/a[1]"
+re2 = "/a[2]"
+r3 = "/a[3]" # No. of result
+re4 = "/a[4]"
+re5 = "/a[5]"
+basestruct = "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]" # Page 1 initial structure
+p1structv1 = "/div/div[2]/div[2]" # Type 1 product structure.
+p1structv2 = "/div/div[3]/div[2]" # Type 2 product structure.
+ttl = "/div[1]/div[1]" # TITLE (usage order : base + re[] + structv1/v2 + ttl)
+quant = "/div[1]/div[2]" # quantity 
+singleq = "/span" # no dropdown and single quantity
+ddq = "/div"      # dropdown and multiple quantities
+prc = "/div[2]/div[1]" # price
+actprc = "/div" # non-discounted price
+discprc = "/div[1]" # discounted price
+
+
 def BlinkfirstResult():
         
-        blinkR1Title = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[3]/div[2]/div[1]/div[1]').text
+        # checks product title's length, and chooses accordingly
+        try :
+                blinkR1TitleV1= basestruct+re1+p1structv1+ttl
+                blinkR1Title = driver.find_element(By.XPATH,blinkR1TitleV1).text
+        except NoSuchElementException:
+                blinkR1TitleXP2 = basestruct+re1+p1structv2+ttl
+                blinkR1Title = driver.find_element(By.XPATH,blinkR1TitleXP2).text
+        
+
+
+        dropdownChecksingleqV1 = basestruct+re1+p1structv1+quant+singleq
+        dropdownChecksingleqV2 = basestruct+re1+p1structv2+quant+singleq
+        dropdownCheckddwnqV1 = basestruct+re1+p1structv1+quant+ddq
+        dropdownCheckddwnqV2 = basestruct+re1+p1structv1+quant+ddq
+        
         #checks if qty is not a drop down, if true, fetch price and qty directly
-        if len(driver.find_elements(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[1]/div[2]/span'))>0:
-               blinkR1Q1=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[1]/div[2]/span').text
-               
-               #checks if the original price of the product is slashed out, and fetches the discounted price.
-               if len(driver.find_elements(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[2]/div[1]/div[2]'))>0:
-                        blinkR1Q1prc = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[2]/div[1]/div[1]').text
-               else : 
-                     blinkR1Q1prc=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[2]/div[1]/div').text
+        if len(driver.find_elements(By.XPATH,dropdownChecksingleqV1))>0:
+                blinkR1Q1 = driver.find_element(By.XPATH,dropdownChecksingleqV1).text
+                
+                try:
+                        blinkR1Q1prc = driver.find_element(By.XPATH,).text
+                except NoSuchElementException : 
+                        blinkR1Q1prc=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[2]/div[1]/div').text
         
-        #if above conditonal is false, proceeds to click on dropdown menu and fetches price and qty from the popup menu      
-        else:
-         blinkR1QuantityDropdown = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[3]/div[2]/div[1]/div[2]/div').click()
-         blinkR1Q1 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[1]/div[2]').text
-               
-         if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[2]'))>0:
-          blinkR1Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[1]').text
-         else : 
-          blinkR1Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div').text
         
+        elif len(driver.find_elements(By.XPATH,dropdownChecksingleqV2))>0:
+                blinkR1Q1 = driver.find_elements(By.XPATH,dropdownChecksingleqV2)[0].text
+                try:
+                        blinkR1Q1slashed = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[3]/div[2]/div[2]/div[1]/div[2]')
+                        blinkR1Q1prc = driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[3]/div[2]/div[2]/div[1]/div[1]').text
+                except NoSuchElementException : 
+                        blinkR1Q1prc=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[1]/div/div[2]/div[2]/div[2]/div[1]/div').text
+        
+        #if above, proceeds to click on dropdown menu and fetches price and qty from the popup menu      
+        
+        elif len(driver.find_elements(By.XPATH,dropdownCheckddwnqV1))>0:
+                blinkR1QuantityDropdown = driver.find_element(By.XPATH,dropdownCheckddwnqV1).click()
+                blinkR1Q1 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[1]/div[2]').text
+               
+                if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[2]'))>0:
+                        blinkR1Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[1]').text
+                else : 
+                        blinkR1Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div').text
+        
+        elif len(driver.find_elements(By.XPATH,dropdownCheckddwnqV2))>0:
+                blinkR1QuantityDropdown = driver.find_element(By.XPATH,dropdownCheckddwnqV2).click()
+                blinkR1Q1 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[1]/div[2]').text
+               
+                if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[2]'))>0:
+                        blinkR1Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[1]').text
+                else : 
+                        blinkR1Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div').text
+
         if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[1]/div[2]'))>0:
          blinkR1Q2 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[1]/div[2]').text
                 
@@ -69,33 +119,42 @@ def BlinkfirstResult():
 
 
 def BlinkSecondResult():
+        # checks product title's length, and chooses accordingly
+        try :
+                blinkR2Title = driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[1]').text
+        except NoSuchElementException:
+                blinkR2Title = driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[2]/div[2]/div[1]/div[1]').text
         
-        blinkR2Title = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[1]').text
-        if len(driver.find_elements(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[1]'))>0:
-               blinkR2Q1=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[2]/span').text
-               
-               if len(driver.find_elements(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[2]/div[1]/div[2]'))>0:
-                        blinkR2Q1prc = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[2]/div[1]/div[1]').text
-               else : 
-                blinkR2Q1prc=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[2]/div[2]/div[2]/div[1]/div').text      
-
-        else:
-         blinkR2QuantityDropdown = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[2]/div[2]/div[1]/div[2]/div').click()
-         blinkR2Q1 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[1]/div[2]').text
-               
-         if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[2]'))>0:
-                blinkR2Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[1]').text
-         else : 
-                blinkR2Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div').text
+        #checks if qty is not a drop down, if true, fetch price and qty directly
+        if len(driver.find_elements(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[2]/span'))>0:
+                blinkR1Q1 = driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[2]/span').text
+        elif len(driver.find_elements(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[2]/div[2]/div[1]/div[2]/span'))>0:
+                blinkR1Q1 = driver.find_elements(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[2]/div[2]/div[1]/div[2]/span')[0].text
                 
-         if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[1]/div[2]'))>0:
-                blinkR2Q2 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[1]/div[2]').text
-                blinkR2Q2prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[2]/div/div').text
-
-                if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]'))>0:
-                 blinkR2Q2prc = driver.find_element(By.XPATH,'/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[1]').text
+                #checks if the original price of the product is slashed out, and fetches the discounted price.
+                try:
+                        blinkR2Q1slashed = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[2]/div[1]/div[2]')
+                        blinkR2Q1prc = driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[2]/div[1]/div[1]').text
+                except NoSuchElementException : 
+                        blinkR2Q1prc=driver.find_element(By.XPATH,'/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[2]/div[2]/div[2]/div[1]/div').text
+        
+        #if above, proceeds to click on dropdown menu and fetches price and qty from the popup menu      
+        else :
+                blinkR2QuantityDropdown = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[2]/div').click()
+                blinkR2Q1 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[1]/div[2]').text
+               
+                if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[2]'))>0:
+                        blinkR2Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div[1]').text
                 else : 
-                 blinkR2Q2prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[2]/div/div').text        
+                        blinkR2Q1prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div').text
+        
+        if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[1]/div[2]'))>0:
+         blinkR2Q2 = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[1]/div[2]').text
+                
+         if len(driver.find_elements(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]'))>0:
+          blinkR2Q2prc = driver.find_element(By.XPATH,'/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[1]').text
+         else : 
+          blinkR2Q2prc = driver.find_element(By.XPATH, '/html/body/div[5]/div/div/div/div/div[2]/div[2]/div/div[2]/div/div').text
          
          blinkResultCross()
          
