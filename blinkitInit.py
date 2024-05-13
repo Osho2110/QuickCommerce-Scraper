@@ -6,6 +6,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.firefox.options import Options 
+# options = Options() 
+# options.add_argument("-headless")
 
 def typeSim(element, text, delay=0.05):
     for character in text:
@@ -169,8 +172,8 @@ while True:
     else:
         print("Invalid Pincode. Please enter only digits.")
 
-productName = input("Enter Product Name : ")
 driver = webdriver.Firefox()
+# driver = webdriver.Firefox(options=options) 
 driver.get("https://blinkit.com")
 driver.implicitly_wait(2)
 
@@ -191,5 +194,6 @@ try:
     print("Sorry for the inconvenience, Blinkit doesn't deliver at your location.")
     driver.quit()
 except (TimeoutException, NoSuchElementException):
-    print("Delivery available at your location, fetching relevant results.")
+    print("Delivery available at your location, please enter the name of your desired product.")
+    productName = input("Enter Product Name : ")
     blinkSearch(driver)
