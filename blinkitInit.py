@@ -42,9 +42,19 @@ def productInfo(driver):
         title_elem = product.find('div', class_='Product__UpdatedTitle-sc-11dk8zk-9')
         title = title_elem.text.strip() if title_elem else "Title Not Found"
 
+        # variables for configuring multiple quantity dropdowns XPATH:
+        baseClick = "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]"
+        clickNo = f"/a[{i}]"
+        clickEndA = "/div/div[2]/div[2]/div[1]/div[2]/div/div[1]"
+        clickEndB = "/div/div[3]/div[2]/div[1]/div[2]/div/div[1]"
+
         #checks if there are multiple product variants
         try:
-            wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.plp-product__quantity--box'))).click()
+            wait = WebDriverWait(driver, 1)
+            element = wait.until(EC.any_of(
+                    EC.element_to_be_clickable((By.XPATH, f"{baseClick}{clickNo}{clickEndA}")),
+                    EC.element_to_be_clickable((By.XPATH, f"{baseClick}{clickNo}{clickEndB}"))))
+            element.click()
 
             WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.ProductVariantModal__AddCrossIcon-sc-7k6v9m-14')))
 
@@ -71,7 +81,7 @@ def productInfo(driver):
         # when no quantity button is found : 
         except (NoSuchElementException, TimeoutException):
   
-            quantity_elem = product.find('div', class_='bff_variant_text_only plp-product__quantity--box')
+            quantity_elem = product.find('span', class_='bff_variant_text_only plp-product__quantity--box')
             quantity = quantity_elem.text.strip() if quantity_elem else "N/A"
             
             price_elem = product.find('div', style='color: rgb(31, 31, 31); font-weight: 600; font-size: 12px;')
@@ -94,6 +104,8 @@ while True:
     else:
         print("Invalid Pincode. Please enter only digits.")
 
+productName = input("Enter Product Name: ")
+
 driver = webdriver.Firefox()
 driver.get("https://blinkit.com")
 driver.implicitly_wait(2)
@@ -114,5 +126,4 @@ try:
     driver.quit()
 except (TimeoutException, NoSuchElementException):
     print("Delivery available at your location, please enter the name of your desired product.")
-    productName = input("Enter Product Name: ")
     blinkSearch(driver)
