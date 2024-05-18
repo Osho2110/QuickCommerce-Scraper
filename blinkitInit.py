@@ -7,8 +7,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.firefox.options import Options 
+from bs4 import BeautifulSoup
 # options = Options() 
 # options.add_argument("-headless")
+# options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0")
+# options.add_argument("--disable-blink-features=AutomationControlled")
 
 def typeSim(element, text, delay=0.05):
     for character in text:
@@ -20,151 +23,43 @@ def blinkSearch(driver):
     searchbar = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[1]/header/div[2]/div/input')
     searchbar.clear()
     searchbar.send_keys(productName)
-    BlinkFirstResult()
-    BlinkSecondResult()
-    BlinkThirdResult()
-    BlinkFourthResult()
+    productInfo(driver)
 
-def blinkResultCross():
-    try:
-        blinkCross = WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.ProductVariantModal__AddCrossIcon-sc-7k6v9m-14')))
-        blinkCross.click()
-    except TimeoutException:
-        print("Element not clickable within timeout.")
-
-def getProductInfo(resultNo, baseStruct, reNo, structV1, structV2):
-    no_stock = False
-    stockV1 = f"{baseStruct}{reNo}{structV1}{stockcheck}"
-    stockV2 = f"{baseStruct}{reNo}{structV2}{stockcheck}"
     
-    # checks if product is in stock
-    try:
-        driver.find_element(By.XPATH, stockV1)
-        no_stock = True
-    except NoSuchElementException:
-        pass
-    try:
-        driver.find_element(By.XPATH, stockV2)
-        no_stock = True
-    except NoSuchElementException:
-        pass
+def productInfo(driver):
+    wait = WebDriverWait(driver, 1)
+    wait.until(EC.any_of(
+            EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[3]/div[2]/div[1]/div[1]")),
+            EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[2]/div[2]/div[1]/div[1]"))))
+    
+    html_content = driver.page_source
+    soup = BeautifulSoup(html_content, 'html.parser')
+    
+    all_products = soup.find_all('a', {'data-test-id': 'plp-product'})
+    products = all_products[:4]  
 
-    if no_stock:
-        return
+    for i, product in enumerate(products, start=1):
+        
+        # Extract Title
+        title_elem = product.find('div', class_='Product__UpdatedTitle-sc-11dk8zk-9')
+        title = title_elem.text.strip() if title_elem else "Title Not Found"
+        
+        # Extract Quantity (both single and dropdown)
+        quantity_elements = product.find_all(
+            class_=['plp-product__quantity--box', 'bff_variant_text_only plp-product__quantity--box'])
+        quantity = quantity_elements[0].text.strip() if quantity_elements else "Quantity Not Found"
 
-    # finds product title
-    try:
-        title_v1 = f"{baseStruct}{reNo}{structV1}{ttl}"
-        title = driver.find_element(By.XPATH, title_v1).text
-    except NoSuchElementException:
-        title_v2 = f"{baseStruct}{reNo}{structV2}{ttl}"
-        title = driver.find_element(By.XPATH, title_v2).text
+        # Extract Price (handling missing price element and potential offer price)
+        price_elem = product.find('div', style='color: rgb(31, 31, 31); font-weight: 600; font-size: 12px;')
+        if price_elem:
+            price = price_elem.text.strip()
+        else:
+            offer_price_elem = product.find('div', style='color: rgb(130, 130, 130); font-weight: 400; font-size: 12px; text-decoration-line: line-through;')
+            price = offer_price_elem.find_previous_sibling('div').text.strip() if offer_price_elem else "Price Not Found"
 
-    no_dd_act_prc_v1 = f"{baseStruct}{reNo}{structV1}{prc}{actprc}"
-    no_dd_act_prc_v2 = f"{baseStruct}{reNo}{structV2}{prc}{actprc}"
-    no_dd_disc_prc_v1 = f"{baseStruct}{reNo}{structV1}{prc}{discprc}"
-    no_dd_disc_prc_v2 = f"{baseStruct}{reNo}{structV2}{prc}{discprc}"
-    quant_check_single_v1 = f"{baseStruct}{reNo}{structV1}{quant}{singleq}"
-    quant_check_single_v2 = f"{baseStruct}{reNo}{structV2}{quant}{singleq}"
-    quant_check_ddwn_v1 = f"{baseStruct}{reNo}{structV1}{quant}{ddqV1}"
-    quant_check_ddwn_v2 = f"{baseStruct}{reNo}{structV2}{quant}{ddqV2}"
+        print(f"{i}) {title} {quantity} @ {price}")  
 
-    # checks quantity type - dropdown / single
-    try:
-        q1 = driver.find_element(By.XPATH, quant_check_single_v1).text
-       #checks price type - actual/discount
-        try:
-            q1_prc = driver.find_element(By.XPATH, no_dd_disc_prc_v1).text
-        except NoSuchElementException:
-            q1_prc = driver.find_element(By.XPATH, no_dd_act_prc_v1).text
-
-    except NoSuchElementException:
-        pass
-
-    try:
-        q1 = driver.find_element(By.XPATH, quant_check_single_v2).text
-        try:
-            q1_prc = driver.find_element(By.XPATH, no_dd_disc_prc_v2).text
-        except NoSuchElementException:
-            q1_prc = driver.find_element(By.XPATH, no_dd_act_prc_v2).text
-    except NoSuchElementException:
-        pass
-
-    try:
-        driver.find_element(By.XPATH, quant_check_ddwn_v1).click()
-        q1 = driver.find_element(By.CSS_SELECTOR, ddwnQ1).text
-        q1_prc = driver.find_element(By.CSS_SELECTOR, ddwnP1).text
-        try:
-            q2 = driver.find_element(By.CSS_SELECTOR, ddwnQ2).text
-            q2_prc = driver.find_element(By.CSS_SELECTOR, ddwnP2).text
-        except NoSuchElementException:
-            pass
-        blinkResultCross()
-    except NoSuchElementException:
-        pass
-
-    try:
-        driver.find_element(By.XPATH, quant_check_ddwn_v2).click()
-        q1 = driver.find_element(By.CSS_SELECTOR, ddwnQ1).text
-        q1_prc = driver.find_element(By.CSS_SELECTOR, ddwnP1).text
-        try:
-            q2 = driver.find_element(By.CSS_SELECTOR, ddwnQ2).text
-            q2_prc = driver.find_element(By.CSS_SELECTOR, ddwnP2).text
-        except NoSuchElementException:
-            pass
-        blinkResultCross()
-    except NoSuchElementException:
-        pass
-
-    op = f"{resultNo}) {q1} {title} @ {q1_prc}"
-    #alters o/p if there's more than 1 qty
-    if 'q2' in locals():
-        op = f"{resultNo}) {title} is available in following packs : {q1} @ {q1_prc} ; {q2} @ {q2_prc}"
-
-    print(op)
-
-def BlinkFirstResult():
-    getProductInfo(1, basestruct, re1, p1structv1, p1structv2)
-
-def BlinkSecondResult():
-    getProductInfo(2, basestruct, re2, p1structv1, p1structv2)
-
-def BlinkThirdResult():
-    getProductInfo(3, basestruct, re3, p1structv1, p1structv2)
-
-def BlinkFourthResult():
-    getProductInfo(4, basestruct, re4, p1structv1, p1structv2)
-
-re1 = "/a[1]"
-re2 = "/a[2]"
-re3 = "/a[3]"  # No. of result
-re4 = "/a[4]"
-re5 = "/a[5]"
-basestruct = "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]"  # Page 1 initial structure
-p1structv1 = "/div/div[2]/div[2]"  # Type 1 product structure.
-p1structv2 = "/div/div[3]/div[2]"  # Type 2 product structure.
-ttl = "/div[1]/div[1]"  # TITLE (usage order : base + re[] + structv1/v2 + ttl)
-stockcheck = "/div[2]/div[2]/span"
-quant = "/div[1]/div[2]"
-singleq = "/span"  # no dropdown and single quantity
-ddqV1 = "/div"  # dropdown and multiple quantities type 1
-ddqV2 = "/div/div[1]"  # dropdown and multiple quantities type 2
-prc = "/div[2]/div[1]"  # price
-actprc = "/div"  # non-discounted price
-discprc = "/div[1]"  # discounted price
-ddbase = ".ProductVariantModal__BottomSection-sc-7k6v9m-2 > "
-dd1 = "div:nth-child(1) > "
-dd2 = "div:nth-child(2) > "
-dd3 = "div:nth-child(3) > "
-ddquant = "div:nth-child(1) > div:nth-child(1) > div:nth-child(2)"
-ddprc = "div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1)"
-ddwnQ1 = ddbase + dd1 + ddquant
-ddwnQ2 = ddbase + dd2 + ddquant
-ddwnQ3 = ddbase + dd3 + ddquant
-ddwnP1 = ddbase + dd1 + ddprc
-ddwnP2 = ddbase + dd2 + ddprc
-ddwnP3 = ddbase + dd3 + ddprc
-
+    
 while True:
     pincode = input("Enter Pincode : ")
     if pincode.isdigit():
