@@ -6,17 +6,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from selenium.webdriver.firefox.options import Options 
+from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
-# options = Options() 
-# options.add_argument("-headless")
-# options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0")
-# options.add_argument("--disable-blink-features=AutomationControlled")
 
 def typeSim(element, text, delay=0.05):
     for character in text:
         ActionChains(driver).move_to_element(element).click().send_keys(character).perform()
         time.sleep(delay)
+
+def blinkResultCross():
+    blinkCross = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.ProductVariantModal__AddCrossIcon-sc-7k6v9m-14')))
+    blinkCross.click()
 
 def blinkSearch(driver):
     driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[1]/header/div[2]/a/div[2]/div').click()
@@ -25,50 +25,76 @@ def blinkSearch(driver):
     searchbar.send_keys(productName)
     productInfo(driver)
 
-    
 def productInfo(driver):
     wait = WebDriverWait(driver, 1)
     wait.until(EC.any_of(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[3]/div[2]/div[1]/div[1]")),
-            EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[2]/div[2]/div[1]/div[1]"))))
-    
+        EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[3]/div[2]/div[1]/div[1]")),
+        EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[2]/div[2]/div[1]/div[1]"))))
+
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, 'html.parser')
-    
     all_products = soup.find_all('a', {'data-test-id': 'plp-product'})
-    products = all_products[:4]  
 
+    products = all_products[:4]
+
+    # finds multiple products
     for i, product in enumerate(products, start=1):
-        
-        # Extract Title
         title_elem = product.find('div', class_='Product__UpdatedTitle-sc-11dk8zk-9')
         title = title_elem.text.strip() if title_elem else "Title Not Found"
-        
-        # Extract Quantity (both single and dropdown)
-        quantity_elements = product.find_all(
-            class_=['plp-product__quantity--box', 'bff_variant_text_only plp-product__quantity--box'])
-        quantity = quantity_elements[0].text.strip() if quantity_elements else "Quantity Not Found"
 
-        # Extract Price (handling missing price element and potential offer price)
-        price_elem = product.find('div', style='color: rgb(31, 31, 31); font-weight: 600; font-size: 12px;')
-        if price_elem:
-            price = price_elem.text.strip()
-        else:
-            offer_price_elem = product.find('div', style='color: rgb(130, 130, 130); font-weight: 400; font-size: 12px; text-decoration-line: line-through;')
-            price = offer_price_elem.find_previous_sibling('div').text.strip() if offer_price_elem else "Price Not Found"
+        #checks if there are multiple product variants
+        try:
+            wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.plp-product__quantity--box'))).click()
 
-        print(f"{i}) {title} {quantity} @ {price}")  
+            WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.ProductVariantModal__AddCrossIcon-sc-7k6v9m-14')))
 
-    
+            html_content = driver.page_source
+            soup = BeautifulSoup(html_content, 'html.parser')
+
+            variants = []
+            for variant_div in soup.find_all('div', style="cursor: pointer; display: flex; flex-direction: column; gap: 12px;"):
+                quantity = variant_div.find('div', class_='ProductVariantModal__ProductTitle-sc-7k6v9m-5').text.strip()
+                price_div = variant_div.find('div', class_='ProductVariantModal__Price-sc-7k6v9m-7')
+                price = price_div.text.strip() if price_div else "N/A"
+                variant_dict = {'quantity': quantity, 'price': price}
+                variants.append(variant_dict)
+
+            print(f"{i}) {title} is available in following quantities:")
+            for variant in variants:
+                print(f"{variant['quantity']} @ {variant['price']}")
+
+            blinkResultCross()
+
+            html_content = driver.page_source
+            soup = BeautifulSoup(html_content, 'html.parser')
+
+        # when no quantity button is found : 
+        except (NoSuchElementException, TimeoutException):
+  
+            quantity_elem = product.find('div', class_='bff_variant_text_only plp-product__quantity--box')
+            quantity = quantity_elem.text.strip() if quantity_elem else "N/A"
+            
+            price_elem = product.find('div', style='color: rgb(31, 31, 31); font-weight: 600; font-size: 12px;')
+            if price_elem:
+                price = price_elem.text.strip()
+           
+            else:
+                offer_price_elem = product.find('div', style='color: rgb(130, 130, 130); font-weight: 400; font-size: 12px; text-decoration-line: line-through;')
+                price = offer_price_elem.find_previous_sibling('div').text.strip() if offer_price_elem else "Price Not Found"
+            
+            variant_dict = {'quantity': quantity, 'price': price}
+            print(f"{i}) {title} is available in following quantities:")
+            print(f"{variant_dict['quantity']} @ {variant_dict['price']}")
+
+
 while True:
-    pincode = input("Enter Pincode : ")
+    pincode = input("Enter Pincode: ")
     if pincode.isdigit():
         break
     else:
         print("Invalid Pincode. Please enter only digits.")
 
 driver = webdriver.Firefox()
-# driver = webdriver.Firefox(options=options) 
 driver.get("https://blinkit.com")
 driver.implicitly_wait(2)
 
@@ -83,12 +109,10 @@ addressSuggestion = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]
 addressSuggestion.click()
 
 try:
-    unserviceableAddress = WebDriverWait(driver, 1).until(
-        EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div/div')))
-
+    unserviceableAddress = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div/div')))
     print("Sorry for the inconvenience, Blinkit doesn't deliver at your location.")
     driver.quit()
 except (TimeoutException, NoSuchElementException):
     print("Delivery available at your location, please enter the name of your desired product.")
-    productName = input("Enter Product Name : ")
+    productName = input("Enter Product Name: ")
     blinkSearch(driver)
