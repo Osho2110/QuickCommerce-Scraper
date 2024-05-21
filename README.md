@@ -1,12 +1,18 @@
-<p align="center">
-  <picture>
-  <source media="(prefers-color-scheme: light)" srcset="assets/MercuryLight.png">
-  <source media="(prefers-color-scheme: dark)" srcset="/assets/MercuryDark.png">
-  <img alt="Logo">
-</picture>
-</p>
+# Integration branch
 
+### Prerequisites/dependencies:
+1. Python:
+   - Flask
+   - Selenium
+   - BeautifulSoup
+2. Node.js
 
-# Mercury: A Quick Commerce Scraper
-### Currently Supported Sites: 
-* Blinkit
+### Instructions:
+1. clone this branch
+2. install all prerequisites
+3. run `app.py` ONLY
+4. Open `localhost:5000` on your browser or follow the link in o/p
+5. Enter pincode
+6. go back to output terminal of `app.py` and enter product name there.
+7. final output currently in terminal only
+
