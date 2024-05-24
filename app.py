@@ -11,12 +11,20 @@ app = Flask(__name__,template_folder="templates")
 def hello(): 
 	return render_template('index.html') 
 
-@app.route('/process', methods=['POST']) 
-def process(): 
-	data = request.form.get('data') 
-	x=str(data) 
-	sendpin(x)
-	result = f"your data is {x}" 
+@app.route('/pincode_post', methods=['POST']) 
+def pincode_post(): 
+	data = request.form.get('pin') 
+	p=str(data) 
+	sendpin(p)
+	result = f"your data is {p}" 
+	return result 
+
+@app.route('/searchbar', methods=['POST'])
+def searchbar():
+	search = request.form.get('searchterm') 
+	s=str(search) 
+	bk.blinkSearch(s)
+	result = f"your data is {s}" 
 	return result 
 
 if __name__ == '__main__': 
