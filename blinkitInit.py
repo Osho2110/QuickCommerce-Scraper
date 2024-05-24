@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
+import json
 
 def typeSim(element, text, delay=0.05):
     for character in text:
@@ -28,26 +29,27 @@ def blinkSearch(driver):
 def productInfo(driver):
     wait = WebDriverWait(driver, 1)
     wait.until(EC.any_of(
-        EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[3]/div[2]/div[1]/div[1]")),
-        EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[4]/div/div[2]/div[2]/div[1]/div[1]"))))
+        EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[3]/div[2]/div[1]/div[1]")),
+        EC.presence_of_element_located((By.XPATH, "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]/a[2]/div/div[2]/div[2]/div[1]/div[1]"))))
 
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, 'html.parser')
     all_products = soup.find_all('a', {'data-test-id': 'plp-product'})
-
-    products = all_products[:4]
+    product_data = []
+    products = all_products[:2]
 
     # finds multiple products
     for i, product in enumerate(products, start=1):
         title_elem = product.find('div', class_='Product__UpdatedTitle-sc-11dk8zk-9')
         title = title_elem.text.strip() if title_elem else "Title Not Found"
+        product_link = "blinkit.com" + product['href']
 
         # variables for configuring multiple quantity dropdowns XPATH:
         baseClick = "/html/body/div[1]/div/div/div[3]/div/div/div[2]/div[1]/div/div/div/div[2]/div[2]"
         clickNo = f"/a[{i}]"
         clickEndA = "/div/div[2]/div[2]/div[1]/div[2]/div/div[1]"
         clickEndB = "/div/div[3]/div[2]/div[1]/div[2]/div/div[1]"
-
+        
         #checks if there are multiple product variants
         try:
             wait = WebDriverWait(driver, 1)
@@ -69,10 +71,15 @@ def productInfo(driver):
                 variant_dict = {'quantity': quantity, 'price': price}
                 variants.append(variant_dict)
 
-            print(f"{i}) {title} is available in following quantities:")
             for variant in variants:
-                print(f"{variant['quantity']} @ {variant['price']}")
-
+                product_data.append(
+                    {
+                        "title": title,
+                        "quantity": variant["quantity"],
+                        "price": variant["price"],
+                        "link": product_link,
+                    }
+                )
             blinkResultCross()
 
             html_content = driver.page_source
@@ -92,9 +99,19 @@ def productInfo(driver):
                 offer_price_elem = product.find('div', style='color: rgb(130, 130, 130); font-weight: 400; font-size: 12px; text-decoration-line: line-through;')
                 price = offer_price_elem.find_previous_sibling('div').text.strip() if offer_price_elem else "Price Not Found"
             
-            variant_dict = {'quantity': quantity, 'price': price}
-            print(f"{i}) {title} is available in following quantities:")
-            print(f"{variant_dict['quantity']} @ {variant_dict['price']}")
+            variant_dict["quantity"] = quantity
+            variant_dict["price"] = price.encode("utf-8").decode()
+            product_data.append(
+                {
+                    "title": title,
+                    "quantity": variant_dict["quantity"],
+                    "price": variant_dict["price"],
+                    "link": product_link,
+                }
+            )
+
+    with open("output.json", "w", encoding="utf-8") as json_file:
+        json.dump(product_data, json_file, ensure_ascii=False, indent=4)
 
 
 while True:
@@ -106,7 +123,10 @@ while True:
 
 productName = input("Enter Product Name: ")
 
-driver = webdriver.Firefox()
+
+options = Options() 
+options.add_argument("-headless")
+driver = webdriver.Firefox(options=options)
 driver.get("https://blinkit.com")
 driver.implicitly_wait(2)
 
