@@ -2,9 +2,6 @@ from flask import Flask,render_template, request
 import blinkitInit as bk
 
 
-def sendpin(info):
-	bk.pinin(info)
-
 app = Flask(__name__,template_folder="templates") 
 
 @app.route("/") 
@@ -15,7 +12,7 @@ def hello():
 def pincode_post(): 
 	data = request.form.get('pin') 
 	p=str(data) 
-	sendpin(p)
+	bk.pinin(p)
 	result = f"your data is {p}" 
 	return result 
 

@@ -9,9 +9,9 @@ submitButton.addEventListener('click', () => {
     pincodePrompt.style.display = 'none';
     websiteInterface.style.display = 'block';
 			$.ajax({ 
-				url: '/process', 
+				url: '/pincode_post', 
 				type: 'POST', 
-				data: { 'data': pincode }, 
+				data: { 'pin': pincode }, 
 				success: function(response) { 
 					document.getElementById('output').innerHTML = response; 
 				}, 

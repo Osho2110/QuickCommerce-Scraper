@@ -99,21 +99,14 @@ def productInfo(driver):
             print(f"{i}) {title} is available in following quantities:")
             print(f"{variant_dict['quantity']} @ {variant_dict['price']}")
 
-'''
-currtime=os.path.getmtime("C:/ALWIN/Coding/Code/Mini Proj/pincode.txt")
-while (currtime == os.path.getmtime("C:/ALWIN/Coding/Code/Mini Proj/pincode.txt")):
-    time.sleep(0.5)
-    print("waiting")
-'''
-
-
-def pinin(somepinasstr):
+#Receives pincode from server 
+def pinin(p):
    global pincode
-   pincode=somepinasstr
-   prod()
+   pincode=p
+   CheckAvailability()
    
 
-def prod():
+def CheckAvailability():
     global driver, addressBar, reAddressBar, unserviceableAddress
     driver = webdriver.Firefox()
     driver.get("https://blinkit.com")
