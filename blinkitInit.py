@@ -1,4 +1,4 @@
-import time
+import os, time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -19,7 +19,8 @@ def blinkResultCross():
     blinkCross = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.ProductVariantModal__AddCrossIcon-sc-7k6v9m-14')))
     blinkCross.click()
 
-def blinkSearch(driver):
+def blinkSearch(productName):
+    global driver
     driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[1]/header/div[2]/a/div[2]/div').click()
     searchbar = driver.find_element(By.XPATH, '/html/body/div[1]/div/div/div[1]/header/div[2]/div/input')
     searchbar.clear()
@@ -112,38 +113,33 @@ def productInfo(driver):
 
     with open("output.json", "w", encoding="utf-8") as json_file:
         json.dump(product_data, json_file, ensure_ascii=False, indent=4)
+        
+#Receives pincode from server 
+def pinin(p):
+   global pincode
+   pincode=p
+   CheckAvailability()
+   
 
+def CheckAvailability():
+    global driver, addressBar, reAddressBar, unserviceableAddress
+    options = Options() 
+    options.add_argument("-headless")
+    driver = webdriver.Firefox(options=options)
+    driver.get("https://blinkit.com")
+    driver.implicitly_wait(4)
+    addressBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div/input')
+    addressBar.clear()
+    typeSim(addressBar, pincode[:3])
+    reAddressBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[1]/div/div/div/div[2]/div[2]/div/div[2]/div/div/div/input')
+    typeSim(reAddressBar, pincode[-3:])
+    time.sleep(1)
+    addressSuggestion = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div[1]/div[2]/div[1]')
+    addressSuggestion.click()
 
-while True:
-    pincode = input("Enter Pincode: ")
-    if pincode.isdigit():
-        break
-    else:
-        print("Invalid Pincode. Please enter only digits.")
-
-productName = input("Enter Product Name: ")
-
-
-options = Options() 
-options.add_argument("-headless")
-driver = webdriver.Firefox(options=options)
-driver.get("https://blinkit.com")
-driver.implicitly_wait(2)
-
-addressBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div/input')
-addressBar.clear()
-typeSim(addressBar, pincode[:3])
-
-reAddressBar = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[1]/div/div/div/div[2]/div[2]/div/div[2]/div/div/div/input')
-typeSim(reAddressBar, pincode[-3:])
-time.sleep(1)
-addressSuggestion = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div[1]/div[2]/div[1]')
-addressSuggestion.click()
-
-try:
-    unserviceableAddress = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div/div')))
-    print("Sorry for the inconvenience, Blinkit doesn't deliver at your location.")
-    driver.quit()
-except (TimeoutException, NoSuchElementException):
-    print("Delivery available at your location, please enter the name of your desired product.")
-    blinkSearch(driver)
+    try:
+        unserviceableAddress = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[1]/header/div[2]/div[2]/div/div/div[2]/div/div/div/div')))
+        print("Sorry for the inconvenience, Blinkit doesn't deliver at your location.")
+        driver.quit()
+    except (TimeoutException, NoSuchElementException):
+        print("Delivery available at your location, please enter the name of your desired product.")
