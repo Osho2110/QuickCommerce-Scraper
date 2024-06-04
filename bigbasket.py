@@ -27,8 +27,8 @@ def bigSearch(driver):
 def productInfo(driver):
 
     WebDriverWait(driver, 1).until(EC.any_of(
-                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[5]/div[2]/section[2]/section/ul/li[3]/div/div/h3/a/div/h3')),
-                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[6]/div[2]/section[2]/section/ul/li[3]/div/div/h3/a/div/h3'))))
+                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[5]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3')),
+                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[6]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3'))))
     driver.execute_script("window.scrollBy(0, 200);") 
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, 'html.parser')
