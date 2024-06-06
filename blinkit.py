@@ -113,15 +113,9 @@ def productInfo(driver):
 
     with open("output.json", "w", encoding="utf-8") as json_file:
         json.dump(product_data, json_file, ensure_ascii=False, indent=4)
+        driver.quit()
         
-#Receives pincode from server 
-def pinin(p):
-   global pincode
-   pincode=p
-   CheckAvailability()
-   
-
-def CheckAvailability():
+def BlinkCheckAvailability(pincode):
     global driver, addressBar, reAddressBar, unserviceableAddress
     options = Options() 
     options.add_argument("-headless")

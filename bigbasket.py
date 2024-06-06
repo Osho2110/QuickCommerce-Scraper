@@ -16,7 +16,8 @@ def typeSim(element, text, delay=0.05):
         ActionChains(driver).move_to_element(element).click().send_keys(character).perform()
         time.sleep(delay)
 
-def bigSearch(driver):
+def bigSearch(productName):
+    global driver
     searchbar = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,'/html/body/div[2]/div[1]/header[2]/div[1]/div[1]/div/div/div/div/input')))
     searchbar.click()
     searchbar.clear()
@@ -27,8 +28,8 @@ def bigSearch(driver):
 def productInfo(driver):
 
     WebDriverWait(driver, 1).until(EC.any_of(
-                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[5]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3')),
-                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[6]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3'))))
+        EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[5]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3')),
+        EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[6]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3'))))
     driver.execute_script("window.scrollBy(0, 200);") 
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -66,10 +67,6 @@ def productInfo(driver):
             WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".gTObZp > div:nth-child(2) > div:nth-child(2) > button:nth-child(1)")))
             html_content = driver.page_source
             soup = BeautifulSoup(html_content, 'html.parser')
-            pretty_html = soup.prettify()
-            with open("op3.html", "w", encoding="utf-8") as f:
-                f.write(pretty_html)
-            
 
             for variant_div in soup.find_all('li', role="option"):
 
@@ -124,44 +121,36 @@ def productInfo(driver):
                     "link": product_link,
                 }
             )
+    
+    with open("outputbig.json", "w", encoding="utf-8") as json_file:
+        json.dump(product_data, json_file, ensure_ascii=False, indent=4)
+        driver.quit()
 
+def BigCheckAvailability(pincode):
+    global driver, addressBar, reAddressBar, unserviceableAddress
+    pincode=str(pincode)
+    options = Options() 
+    options.add_argument("-headless")
+    driver = webdriver.Firefox(options=options)
+    # driver = webdriver.Firefox()
+    driver.get("https://bigbasket.com")
+    driver.implicitly_wait(2)
 
-        with open("outputbig.json", "w", encoding="utf-8") as json_file:
-            json.dump(product_data, json_file, ensure_ascii=False, indent=4)
+    addressClick = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.XPATH,'/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div/div/button/span')))
+    addressClick.click()
 
-while True:
-    pincode = input("Enter Pincode: ")
-    if pincode.isdigit():
-        break
-    else:
-        print("Invalid Pincode. Please enter only digits.")
+    addressBar = driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div[1]/div/div[1]/div[2]/input')
+    typeSim(addressBar, pincode[:3])
 
-productName = input("Enter Product Name: ")
+    reAddressBar = driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div[1]/div/div[1]/div[2]/input')
+    typeSim(reAddressBar, pincode[-3:])
+    time.sleep(1)
+    addressSuggestion = driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div[1]/div/div[1]/div[3]/ul/li[1]')
+    addressSuggestion.click()
 
-
-options = Options() 
-options.add_argument("-headless")
-driver = webdriver.Firefox(options=options)
-# driver = webdriver.Firefox()
-driver.get("https://bigbasket.com")
-driver.implicitly_wait(2)
-
-addressClick = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.XPATH,'/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div/div/button/span')))
-addressClick.click()
-
-addressBar = driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div[1]/div/div[1]/div[2]/input')
-typeSim(addressBar, pincode[:3])
-
-reAddressBar = driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div[1]/div/div[1]/div[2]/input')
-typeSim(reAddressBar, pincode[-3:])
-time.sleep(1)
-addressSuggestion = driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/header[2]/div[1]/div[2]/div[1]/div[1]/div/div[1]/div[3]/ul/li[1]')
-addressSuggestion.click()
-
-try:
-    unserviceableAddress = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[6]/div/div/div[2]/span')))
-    print("Sorry for the inconvenience, BigBasket doesn't deliver at your location.")
-    driver.quit()
-except (TimeoutException, NoSuchElementException):
-    print("Delivery available at your location, please enter the name of your desired product.")
-    bigSearch(driver)
+    try:
+        unserviceableAddress = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[6]/div/div/div[2]/span')))
+        print("Sorry for the inconvenience, BigBasket doesn't deliver at your location.")
+        driver.quit()
+    except (TimeoutException, NoSuchElementException):
+        print("Delivery available at your location, please enter the name of your desired product.")
