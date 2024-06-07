@@ -28,25 +28,28 @@ def bigSearch(productName):
 def productInfo(driver):
 
     WebDriverWait(driver, 1).until(EC.any_of(
-        EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[5]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3')),
-        EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[6]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3'))))
+                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[5]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3')),
+                                    EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/div[6]/div[2]/section[2]/section/ul/li[1]/div/div/h3/a/div/h3'))))
     driver.execute_script("window.scrollBy(0, 200);") 
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, 'html.parser')
-    
-    all_products = soup.find_all('a', {'class': 'h-full'})
+
+    all_products = soup.find_all('li', {'class': 'PaginateItems___StyledLi-sc-1yrbjdr-0 dDBqny'})
     product_data = []
     products = all_products[:2]
 
     # finds multiple products
     for i, product in enumerate(products, start=1):
+        
         brand_name = product.find('span', class_='Label-sc-15v1nk5-0 BrandName___StyledLabel2-sc-hssfrl-1 gJxZPQ keQNWn')
         brand = brand_name.text.strip() 
         prod_name = product.find('h3', class_ ='block m-0 line-clamp-2 font-regular text-base leading-sm text-darkOnyx-800 pt-0.5 h-full')
         prod = prod_name.text.strip()
         title = f"{brand} {prod}"
-        product_link = "bigbasket.com" + product['href']
-        
+
+        product_link = product.find('a').get('href')
+        product_link = f"bigbasket.com{product_link}"
+
         # button XPATH config 
         basePath = "/html/body/div[2]/div[1]"
         basePathA = "/div[5]/div[2]/section[2]"
@@ -59,7 +62,7 @@ def productInfo(driver):
         variants = []
 
         try : 
-            wait = WebDriverWait(driver, 1)
+            wait = WebDriverWait(driver, 3)
             button_element = wait.until(
             EC.any_of(
                 EC.element_to_be_clickable((By.XPATH, f"{basePath}{basePathA}{actPath}{clickNo}{buttonPath}")),
@@ -72,18 +75,18 @@ def productInfo(driver):
             html_content = driver.page_source
             soup = BeautifulSoup(html_content, 'html.parser')
 
-            for variant_div in soup.find_all('li', role="option"):
+            for multiple_variants in soup.find_all('li', role="option"):
 
-                quantity_div = variant_div.find('div', class_='w-3/4 mb-1.5 truncate text-md leading-xss text-darkOnyx-800')
-                quantity = quantity_div.text.strip() if quantity_div else None
+                quantity_elem = multiple_variants.find('div', class_='w-3/4 mb-1.5 truncate text-md leading-xss text-darkOnyx-800')
+                quantity = quantity_elem.text.strip() if quantity_elem else None
 
-                price_div = variant_div.find('span', class_='Label-sc-15v1nk5-0 PackChanger___StyledLabel4-sc-newjpv-6 gJxZPQ ixfMcs')
-                price = price_div.text.strip() if price_div else None
-                
+                price_elem = multiple_variants.find('span', class_='Label-sc-15v1nk5-0 PackChanger___StyledLabel4-sc-newjpv-6 gJxZPQ ixfMcs')
+                price = price_elem.text.strip() if price_elem else None
+
                 if quantity and price:
                     variant_dict = {'quantity': quantity, 'price': price}
                     variants.append(variant_dict)
-            
+
             for variant in variants:
                 product_data.append(
                     {
@@ -93,27 +96,22 @@ def productInfo(driver):
                         "link": product_link,
                     }
                 )
-            
+
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) :
 
-            quantity_div = soup.find('div', class_='py-1.5 xl:py-1')
-            label_span = quantity_div.find('span', class_='Label-sc-15v1nk5-0 PackSelector___StyledLabel-sc-1lmu4hv-0 gJxZPQ fnsuXg')
-            quantity_span = label_span.find('span', class_='Label-sc-15v1nk5-0 gJxZPQ truncate')
-            if quantity_span:
-                quantity = quantity_span.text.strip()
-            else:
-                print("Could not find the quantity element on the page.")
+            quantity = product.find('div', class_='py-1.5 xl:py-1')
+            quantity = quantity.text.strip()
             
-            outer_div = soup.find('div', class_='flex flex-col gap-0.5')
+            outer_div = product.find('div', class_='flex flex-col gap-0.5')
             inner_div = outer_div.find('div', class_='Pricing___StyledDiv-sc-pldi2d-0')
             price_elem = inner_div.find('span', class_='Label-sc-15v1nk5-0 Pricing___StyledLabel-sc-pldi2d-1 gJxZPQ AypOi')
             if price_elem:
                 price = price_elem.text.strip()
             else:
                 print("Could not find the price element on the page.")
-            
+
             variant_dict = {'quantity': quantity, 'price': price}
-            
+
             variants.append(variant_dict)
             variant_dict["quantity"] = quantity
             variant_dict["price"] = price.encode("utf-8").decode()
@@ -125,9 +123,10 @@ def productInfo(driver):
                     "link": product_link,
                 }
             )
-    
-    with open("outputbig.json", "w", encoding="utf-8") as json_file:
-        json.dump(product_data, json_file, ensure_ascii=False, indent=4)
+
+
+        with open("outputbig.json", "w", encoding="utf-8") as json_file:
+            json.dump(product_data, json_file, ensure_ascii=False, indent=4)
         driver.quit()
 
 def BigCheckAvailability(pincode):
