@@ -48,7 +48,9 @@ def productInfo(driver):
         product_link = "bigbasket.com" + product['href']
         
         # button XPATH config 
-        basePath = "/html/body/div[2]/div[1]/div[5]/div[2]/section[2]"
+        basePath = "/html/body/div[2]/div[1]"
+        basePathA = "/div[5]/div[2]/section[2]"
+        basePathB = "/div[6]/div[2]/section[2]"
         discPath = "/div/section/ul"
         actPath = "/section/ul"
         clickNo = f"/li[{i}]"
@@ -60,8 +62,10 @@ def productInfo(driver):
             wait = WebDriverWait(driver, 1)
             button_element = wait.until(
             EC.any_of(
-                EC.element_to_be_clickable((By.XPATH, f"{basePath}{actPath}{clickNo}{buttonPath}")),
-                EC.element_to_be_clickable((By.XPATH, f"{basePath}{discPath}{clickNo}{buttonPath}"))))
+                EC.element_to_be_clickable((By.XPATH, f"{basePath}{basePathA}{actPath}{clickNo}{buttonPath}")),
+                EC.element_to_be_clickable((By.XPATH, f"{basePath}{basePathB}{actPath}{clickNo}{buttonPath}")),
+                EC.element_to_be_clickable((By.XPATH, f"{basePath}{basePathA}{discPath}{clickNo}{buttonPath}")),
+                EC.element_to_be_clickable((By.XPATH, f"{basePath}{basePathB}{discPath}{clickNo}{buttonPath}"))))
             button_element.click()
 
             WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".gTObZp > div:nth-child(2) > div:nth-child(2) > button:nth-child(1)")))
