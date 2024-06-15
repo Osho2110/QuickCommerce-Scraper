@@ -1,19 +1,10 @@
-*{
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    box-sizing: border-box;
-}
-body{
-    background: #bf8dc5;
-    color: #333;
-}
 
 .search-container {
     width: 600px;
     background: #FFFFFF;
     margin: 200px auto 0;
     border-radius: 30px;
+    border-color: black;
   }
 
 .row{
@@ -29,7 +20,7 @@ input{
     border: 0;
     outline: 0;
     font-size: 18px;
-    color: #000000;
+    color: #ffffff;
 }
 
 button{
@@ -40,13 +31,13 @@ button{
 
 button .fa-solid{
     width: 25px;
-    color: #555;
+    color: #ffffff;
     font-size: 22px;
     cursor: pointer;
 }
 
 ::placeholder{
-    color: #333;
+    color: #ffffff;
 }
  
 .result-box ul{

@@ -1,0 +1,152 @@
+@media only screen and (max-width: 800px) {
+    .landingpage{
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+    }
+    
+    /*          NAVBAR            */
+    .navbar{
+        height: 3rem;
+        padding: 0.5rem 0 1rem 5px;
+        margin-bottom: 0;
+    }
+    .navbar h1{
+        font-size: 1.7rem;
+    }
+    .opts {
+        margin-top: 0;
+        margin-left: 0;
+    }
+    .cate{
+        display: none;
+    }
+    .opts a{
+        margin-left: 0;
+        margin-right: 10px;
+        border: 1px solid white;
+        padding: 2px;
+    } 
+
+    /*          pg1 content            */
+    .pg1-content{
+        margin-bottom: 10px;
+    }
+    .tagline{
+        letter-spacing: 0;
+        line-height: 2rem;
+        margin-top: 7rem;
+        
+    }
+    .tagline h1{
+        font-size: 1.7rem;
+    }
+    .tagline h2{
+        margin-left: 0.7rem;
+        font-size: 1.5rem;
+    }
+    
+    .pincodes{
+        margin-right: 1rem;
+    }
+    .pincode input{
+        margin: 4rem 1rem;
+        width: 75vw;
+        font-size: 1.2rem;
+    }
+
+    /*              ABOUT US STYLING              */
+    .page2{
+        padding: 5px 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+    }
+    .page2 h1{
+        margin: 2rem 0 0 1rem;
+        font-size: 3rem;
+    }
+    .pg2-content{
+        flex-direction: column;
+        justify-content: space-evenly;
+        margin: 1rem ;
+    }
+    .pg2-img{
+        height: 20rem;
+        width: 20rem;
+        background-image: url(https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+        background-size: cover;
+        background-position: center;
+    }
+    .about-text{
+        margin: 1rem 0;
+        height: 20rem;
+        width: 20rem;
+        font-size: 1rem;
+        letter-spacing: 0;
+        line-height: 1.2rem;
+    }
+
+}
+
+/*              SEARCH PAGE STYLING               */
+
+@media only screen and (max-width: 800px) {
+
+    .search-content{
+        width: 100vw;
+        height: fit-content;
+        margin: 10rem 0;
+    }
+    
+    .search-logo h1{
+        margin-left: 0;
+        font-size: 3.3rem;
+    }
+    .search-box input{
+        margin: 2rem 0.5rem;
+        border-radius: 10px;
+        width: 75vw;
+        font-size: 1.2rem;
+    }
+
+}
+
+/*              LIST PAGE STYLING               */
+
+@media only screen and (max-width: 800px) {
+    .cards{
+        margin-top: 18rem;
+        height: 80vh;
+        width: 22rem;
+        flex-direction: column;
+    }
+    .card{
+        height: 20rem;
+        width: 20rem;
+        margin: 2rem 2rem;
+        
+    }
+    .card img{
+        height: 18rem;
+        width: 18rem;
+    }
+    .card-body{
+        display: flex;
+        justify-content: space-between;
+        padding: 0 2.5rem 0 0;
+    }
+    .card-text{
+        margin-left: 0.5rem;
+        letter-spacing: 1px;
+        line-height: 1.5rem;
+    }
+    
+    .card:hover{
+        opacity: 0.7;
+    }
+    .hr{
+        display: none;
+    }
+    
+}

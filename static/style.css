@@ -1,0 +1,197 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Source Code Pro", monospace;
+    background-color: #88508b;
+    color: #ffffff;
+}
+
+/*              LANDING PAGE STYLING              */
+
+.landingpage{
+    padding: 1rem 1.5rem;
+    height: fit-content;
+    width: fit-content;
+}
+.navbar{
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}   
+.navbar h1{
+    font-size: 2.7rem;
+    font-family: "Poetsen One", sans-serif;
+    letter-spacing: 2px;
+}
+.opts {
+    margin-top: 1.5rem;
+    margin-left: 62rem;
+}
+.opts a{
+    text-decoration: none;
+    cursor: pointer;
+    margin-left: 1rem;
+    font-weight: 600;
+    border: 2px solid white;
+    padding: 5px;
+    border-radius: 1rem;
+}
+
+.pg1-content{
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.tagline{
+    letter-spacing: 2px;
+    font-weight: 800;
+    line-height: 5rem;
+    margin-top: 8rem;
+    
+}
+.tagline h1{
+    font-size: 5rem;
+}
+.tagline h2{
+    margin-left: 1rem;
+    font-size: 4rem;
+}
+
+.pincodes{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pincodes input{
+    margin: 4rem 1rem;
+    width: 30rem;
+    border-radius: 10px;
+    color: #212121;
+    background-color: #ffff;
+    border-radius: 2px solid white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 5px;
+}
+.pincodes h2{
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.pincodes a{
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/*              ABOUT US STYLING              */
+.page2{
+    padding: 1rem 1.5rem;
+    height: fit-content;
+    width: fit-content;
+    overflow: hidden;
+}
+.page2 h1{
+    margin: 2rem 0 0 5rem;
+    font-size: 4rem;
+    font-weight: 800;
+    text-decoration: underline;
+}
+.pg2-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 2rem 5rem 5rem 5rem;
+}
+.pg2-img{
+    height: 30rem;
+    width: 25rem;
+    background-image: url(https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+    background-size: cover;
+    background-position: center;
+}
+.about-text{
+    height: 50%;
+    width: 50%;
+    font-weight: 500;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    line-height: 1.7rem;
+}
+
+/*              SEARCH PAGE STYLING               */
+.search-content{
+    overflow: hidden;
+    width: 95vw;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.search-logo h1{
+    margin-left: 3rem;
+    font-size: 6rem;
+}
+.search-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.search-box input{
+    margin: 2rem 1rem 2rem 4.5rem;
+    border-radius: 10px;
+    width: 35rem;
+    color: #212121;
+    background-color: #ffff;
+    border-radius: 2px solid white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 5px;
+}
+.search-box a{
+    font-size: 2rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/*              LIST STYLING              */
+.cards{
+    display:flex;
+    width: 100%;
+    justify-content: center;
+    height: fit-content;
+
+}
+.card{
+    height: 22rem;
+    width: 22rem;
+    margin: 2rem 0 2rem 2rem;
+    
+}
+.card img{
+    height: 19rem;
+    width: 19rem;
+    border-radius: 1rem;
+    background-color: #ffff;
+}
+.card-body{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 3.5rem 0 0;
+}
+.card-text{
+    margin-left: 0.5rem;
+    letter-spacing: 1px;
+    line-height: 1.5rem;
+}
+
+.card:hover{
+    opacity: 0.7;
+}

@@ -1,33 +1,19 @@
 const pincodeInput = document.getElementById('pincode-input');
 const submitButton = document.getElementById('submit-button');
 const websiteInterface = document.getElementById('website-interface');
-const pincodePrompt = document.getElementById('pincode-prompt');
 
 submitButton.addEventListener('click', () => {
-  pincode = pincodeInput.value;
-  if (isValidPincode(pincode)) {
-    pincodePrompt.style.display = 'none';
-    websiteInterface.style.display = 'block';
-			$.ajax({ 
-				url: '/pincode_post', 
-				type: 'POST', 
-				data: { 'pin': pincode }, 
-				success: function(response) { 
-					document.getElementById('output').innerHTML = response; 
-				}, 
-				error: function(error) { 
-					console.log(error); 
-				} 
-			}); 
-		} 
-  else {
-    alert('Pincode is invalid. Enter a valid 6 digit pincode');
+  const pincode = pincodeInput.value;
+  if (isSixDigitNumber(pincode)) {
+    window.location.href = "file:///C:/Imp Files/Price Comparision Website/Website/search.html";
+    
+  } else {
+    alert('Sorry, we do not offer services in this area.');
   }
 });
 
-function isValidPincode(pincode) {
-	return /^\d{6}$/.test(pincode);
-  }
-
-// Display the pincode prompt popup
-pincodePrompt.style.display = 'block';
+function isSixDigitNumber(pincode) {
+  // Use a regular expression to match exactly six digits
+  const regex = /^\d{6}$/; 
+  return regex.test(pincode);
+}
