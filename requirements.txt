@@ -2,4 +2,3 @@ Flask
 selenium
 requests
 bs4
-	
