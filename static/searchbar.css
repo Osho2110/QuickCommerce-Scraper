@@ -10,12 +10,24 @@
 .row{
     display: flex;
     align-items: center;
-    padding: 10px 20px;
+    padding: 10px 0px;
 }  
+
+
+.searchInpDiv{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #FFFFFF;
+    padding: 0 2px;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
 
 input{
     flex: 1;
-    height: 50px;
+    padding: 2px 0;
     background: transparent;
     border: 0;
     outline: 0;
@@ -37,20 +49,23 @@ button .fa-solid{
 }
 
 ::placeholder{
-    color: #ffffff;
+    color: #ffffffda;
 }
  
 .result-box ul{
-    border-top: 1px solid #999;
+    border-bottom: 1px solid #ffffff;
     padding: 15px 10px;
 }
 .result-box ul {
     list-style: none;;
     border-radius: 3px;
     padding: 15px 10px;
+    transition: all ease-in-out .5s;
     cursor: pointer;
 }
 
 .result-box ul:hover{
-    background: #e9f3ff;
+    background: #ffffffa4;
+    color:#000;
+    font-weight: 600;
 }
