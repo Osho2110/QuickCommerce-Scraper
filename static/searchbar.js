@@ -3,7 +3,8 @@ const items = [
     { name: "Coke" },
     { name: "Pepsi" },
     { name: "Lays" },
-    { name: "Head and Shoulders" }
+    { name: "Head and Shoulders" },
+    { name: "Haldiram's Aloo bhujia" }
 ];
 
 const options = {
@@ -12,8 +13,12 @@ const options = {
 
 const fuse = new Fuse(items, options);
 
+const loadingPopup = document.getElementById('loading-popup');
 const searchInput = document.getElementById('search-input');
 const results = document.getElementById('results');
+const searchbutton = document.getElementById('search-submit');
+
+
 
 searchInput.addEventListener('input', () => {
     const searchQuery = searchInput.value;
@@ -31,7 +36,49 @@ searchInput.addEventListener('input', () => {
             });
             results.appendChild(listItem);
         });
-    } else {
-        results.textContent = 'No matching results found.';
+    } else {// modified content because of display issues
+        const listItem = document.createElement('ul'); 
+        listItem.textContent = "No results found";
+        results.appendChild(listItem);
     }
 });
+
+searchInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        performSearch();
+    }
+});
+
+searchbutton.addEventListener('click', (event) => {
+    event.preventDefault();
+    performSearch();
+});
+
+function performSearch() {
+    const searchterm = searchInput.value;
+    showLoadingPopup();
+    
+    $.ajax({ 
+        url: '/searchbar', 
+        type: 'POST', 
+        data: { 'searchterm': searchterm }, 
+        success: function(data) {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            }
+        }, 
+        error: function(error) { 
+            hideLoadingPopup();
+            console.log(error); 
+        } 
+    }); 
+};
+
+function showLoadingPopup() {
+    loadingPopup.style.display = 'flex';
+}
+
+function hideLoadingPopup() {
+    loadingPopup.style.display = 'none';
+}

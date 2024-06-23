@@ -1,19 +1,56 @@
 const pincodeInput = document.getElementById('pincode-input');
 const submitButton = document.getElementById('submit-button');
-const websiteInterface = document.getElementById('website-interface');
+const loadingPopup = document.getElementById('loading-popup');
 
-submitButton.addEventListener('click', () => {
-  const pincode = pincodeInput.value;
-  if (isSixDigitNumber(pincode)) {
-    window.location.href = "file:///C:/Imp Files/Price Comparision Website/Website/search.html";
-    
-  } else {
-    alert('Sorry, we do not offer services in this area.');
-  }
+console.log('pincodeInput:', pincodeInput);
+console.log('submitButton:', submitButton);
+
+pincodeInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        SendPin();
+    }
 });
 
-function isSixDigitNumber(pincode) {
-  // Use a regular expression to match exactly six digits
-  const regex = /^\d{6}$/; 
-  return regex.test(pincode);
+submitButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    SendPin();
+});
+
+function SendPin(){
+  const pincode = pincodeInput.value;
+  if (isValidPincode(pincode)) {
+	showLoadingPopup();
+			$.ajax({ 
+				url: '/pincode_post', 
+				type: 'POST', 
+				data: { 'pin': pincode }, 
+				success: function(data) { 
+					hideLoadingPopup();
+					if (data.redirect) {
+						window.location.href = data.redirect;
+					}
+				}, 
+				error: function(error) {
+					hideLoadingPopup(); 
+					console.log(error); 
+				} 
+ 
+			}); 
+		} 
+  else {
+    alert('Pincode is invalid. Enter a valid 6 digit pincode');
+  }
+};
+
+function isValidPincode(pincode) {
+	return /^\d{6}$/.test(pincode);
+  }
+
+  function showLoadingPopup() {
+    loadingPopup.style.display = 'flex';
+}
+
+function hideLoadingPopup() {
+    loadingPopup.style.display = 'none';
 }

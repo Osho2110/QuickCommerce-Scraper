@@ -1,39 +1,92 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Mercury-Quick-Com price comparision site</title>
-  <link rel="stylesheet" href="../static/searchbar.css">
-  <script src="https://kit.fontawesome.com/705e4ed735.js" crossorigin="anonymous"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-  <link rel="stylesheet" type="text/css" href="../static/pincode.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercury-Price Comparer</title>
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/28140896?s=280&v=4" type="image/x-icon">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../static/pincode.css">
+
+
 </head>
 <body>
-  <div class="search-container">
-    <div class="row">
-  <input type="text" id="search-input" placeholder="Search...">
-  <button><i class="fa-solid fa-magnifying-glass" id="search-submit"></i></button>
-  
-  </div>
-    <div class="result-box">
-      <div id="results">  </div>
-    </div> 
-</div>    
 
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
-  <script src="../static/searchbar.js"></script>
-
-
-  <div id="pincode-prompt" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <input type="text" id="pincode-input" placeholder="Enter your pincode">
-      <button id="submit-button">Submit</button>
-      <div id="output"></div> 
+    <!--                LOADING POPUP            -->
+    <div id="loading-popup" class="loading-popup">
+        <div class="loading-content">
+            <img src="../static/assets/Location_loading.gif" alt="Loading...">
+            <p class="loading-content">Checking for availability at your location...</p>
+        </div>
     </div>
-  </div>
-  <div id="website-interface" style="display:none;">
-    <!-- Your website interface code goes here -->
-  </div>
-  <script src="../static/pincode.js"></script>
+
+
+    <!--                LANDING PAGE                -->
+    <div class="landingpage">
+        <div class="navbar">
+            <div class="logo">
+                <h1>Mercury</h1>
+            </div>
+            <div class="opts">
+                <a class="aboutbut" href="#page2">About Us</a>
+            </div>
+        </div>
+
+        <div class="pg1-content">
+            <div class="tagline">
+                <h1>Get Your Products At </h1>
+                <h2>The Lowest Cost</h2>
+                <br>
+            </div>
+        
+            
+         
+                <div>
+                  <input type="text" id="pincode-input" placeholder="Enter your pincode">
+                  <button id="submit-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                </div>
+                <script src="../static/pincode.js"></script>
+                
+
+
+        </div>
+    </div>
+    <hr/>
+
+    <!--                ABOUT US PAGE                -->
+    <div class="page2" id="page2">
+        <h1>About Us</h1>
+        <div class="pg2-content">
+            <div class="pg2-img"></div>
+            <div class="about-text">
+                <p>
+Hey there! Welcome to Mercury, the price-comparing wizard you've been waiting for. It scours DMart, Blinkit and BigBasket to find you the best grocery bargains.
+Why overpay when you can save on everything from Aloo bhujia to detergent? It crunches the numbers so you don't have to, turning your shopping trips into saving sprees.
+Join us in the quest to keep your wallet full and your pantry fuller!
+                </p>
+                <p>Developed by <a href="https://github.com/alw8n">Alwin Showi</a> and <a href="https://github.com/Osho2110">Osho Jain</a></p>
+            </div>
+        </div>
+
+    </div>
+    <hr/>
+    
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../static/apps.js"></script>
+
 
 </body>
-</html> 
+</html>

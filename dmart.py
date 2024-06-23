@@ -11,17 +11,8 @@ from bs4 import BeautifulSoup
 import json
 import re
 
-
-while True:
-    pincode = input("Enter Pincode: ")
-    if pincode.isdigit():
-        break
-    else:
-        print("Invalid Pincode. Please enter only digits.")
-
-productName = input("Enter Product Name: ")
-
-def dmartSearch(driver):
+def dmartSearch(productName):
+    global driver
     time.sleep(2)
     searchBar = driver.find_element(By.XPATH, '//*[@id="scrInput"]')
     searchBar.send_keys(productName)
@@ -92,9 +83,9 @@ def productInfo(driver):
             quantity, priceInt = QuantityHandler(quantity_raw, price_per_unit_raw)
 
             price = round(quantity * priceInt)
-            price = f"₹{price}"
+            price = f"{price}"
                     
-            variant_dict = {'quantity': quantity_raw, 'price': price , 'price per unit' : price_per_unit_raw}
+            variant_dict = {'quantity': quantity_raw, 'price': price , 'Link' : "no link"}
             variants.append(variant_dict)
         
         try:
@@ -109,32 +100,42 @@ def productInfo(driver):
                 "title": title,
                 "quantity": variant["quantity"],
                 "price": variant["price"],
-                "price per unit": variant["price per unit"]
+                #"price per unit": variant["price per unit"]
+                "link": "No link"
             })
     
     with open("dmartOP.json", "w", encoding="utf-8") as json_file:
         json.dump(product_data, json_file, ensure_ascii=False, indent=4)   
 
 
+def DmartCheckAvailability(pincode):
+    global driver, addressBar, unserviceableAddress
+    options = Options() 
+    options.add_argument("-headless")
+    driver = webdriver.Firefox(options=options)
+    # driver = webdriver.Firefox()
+    driver.get("https://dmart.in")
+    driver.implicitly_wait(2)
 
-options = Options() 
-options.add_argument("-headless")
-driver = webdriver.Firefox(options=options)
-# driver = webdriver.Firefox()
-driver.get("https://dmart.in")
-driver.implicitly_wait(2)
+    addressBar = WebDriverWait(driver,1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="pincodeInput"]')))
+    addressBar.send_keys(pincode)
 
-addressBar = WebDriverWait(driver,1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="pincodeInput"]')))
-addressBar.send_keys(pincode)
+    try : 
+        unserviceableAddress = WebDriverWait(driver,1).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div/div[2]/p[1]')))
+        print ("Dmart, doesn't deliver at your location.")
+        driver.quit()
 
-try : 
-    unserviceableAddress = WebDriverWait(driver,1).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div/div[2]/p[1]')))
-    print ("Dmart, doesn't deliver at your location.")
-    driver.quit()
+    except (TimeoutException,NoSuchElementException) : 
+        addressSuggestion = WebDriverWait(driver,3).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/div/div/div[2]/div/div/div/ul/li[1]/button')))
+        addressSuggestion.click()
+        addressConfirmation = WebDriverWait(driver,3).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div[2]/div/div[2]/button')))
+        addressConfirmation.click()
+        print("Delivery Available on Dmart")
 
-except (TimeoutException,NoSuchElementException) : 
-    addressSuggestion = WebDriverWait(driver,3).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/div/div/div[2]/div/div/div/ul/li[1]/button')))
-    addressSuggestion.click()
-    addressConfirmation = WebDriverWait(driver,3).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div[3]/div/div/div/div[2]/div[2]/div[2]/div/div[2]/button')))
-    addressConfirmation.click()
-    dmartSearch(driver)
+#Manual input for testing
+if __name__ == "__main__":
+    print("running as main: ")
+    x=str(input("Pincode: "))
+    DmartCheckAvailability(x)
+    y=str(input("search term: "))
+    dmartSearch(y)

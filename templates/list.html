@@ -5,19 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PriceScout -Web Scraper</title>
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/28140896?s=280&v=4" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="mobile.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../static/style.css">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
 
+	<!-- jQuery -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+	<!--Datatables -->
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	
+
 
     <meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>DataTables </title>
+	<title>Results</title>
 	<meta name="description" content="">
 	<meta name="keywords" content="">
 	<link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel=" stylesheet">
@@ -29,6 +35,43 @@
 	<!--Responsive Extension Datatables CSS-->
 	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
 
+	<style>
+		*{
+    margin: 0;
+    padding: 0;
+    font-family: "Source Code Pro", monospace;
+    background-color: #191919;
+    color: #ffffff;
+}
+		.navbar{
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}   
+.navbar h1{
+    font-size: 2.7rem;
+    font-family: "Poetsen One", sans-serif;
+    letter-spacing: 2px;
+}
+.opts {
+    margin-top: 1.5rem;
+    margin-left: 62rem;
+}
+.opts a{
+    text-decoration: none;
+    cursor: pointer;
+    margin-left: 1rem;
+    font-weight: 600;
+    border: 2px solid white;
+    padding: 5px 20px;
+    border-radius: 1rem;
+}
+
+
+	</style>
 	<style>
 		/*Overrides for Tailwind CSS */
 
@@ -122,14 +165,13 @@
 	</style>
 </head>
 <body>
-    <!--                LANDING PAGE                -->
     <div class="card-page">
       <div class="navbar" style="border-bottom: 2px solid white; padding: 1rem 0.5rem;">
           <div class="logo" >
-              <h1>Mercury</h1>
+			<a href="/"><h1>Mercury</h1></a>
           </div>
           <div class="opts">
-              <a class="cate" href="#">Platforms</a>
+              <a class="cate" href="/">Home</a>
           </div>
       </div>
     <div class="cards"> 
@@ -138,47 +180,22 @@
 <!--Container-->
 <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
 
-  <!--Title-->
-  <h1 class="flex items-center font-sans font-bold break-normal text-indigo-500 px-2 py-8 text-xl md:text-2xl">
-    Responsive <a class="underline mx-2" href="https://datatables.net/">DataTables.net</a> Table
-  </h1>
-
 
   <!--Card-->
-  <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+
 
 
     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
       <thead>
         <tr>
-          <th data-priority="3">Price</th>
-          <th data-priority="2">Quantity</th>
-          <th data-priority="4">Product name</th>
-          <th data-priority="1">Price per Unit</th>
-          <th data-priority="5">Product Link</th>
-          <th data-priority="6">Site</th>
+		  <th data-priority="3">Title</th>
+		  <th data-priority="2">Quantity</th>
+		  <th data-priority="1">Price</th>
+		  <th data-priority="4">Link</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>2</td>
-          <td>System Architect</td>
-          <td>Edinburgh</td>
-          <td>Tiger Nixon</td>
-          <td>2011/04/25</td>
-          <td>$320,800</td>
-        </tr>
-
-        <!-- Rest of your data (refer to https://datatables.net/examples/server_side/ for server side processing)-->
-
-        <tr>
-          <td>43</td>
-          <td>Customer Support</td>
-          <td>New York</td>
-          <td>Donna Snider</td>
-          <td>2011/01/25</td>
-          <td>$112,000</td>
-        </tr>
+        
       </tbody>
 
     </table>
@@ -192,24 +209,37 @@
 <!--/container-->
 
 
-
-
-
-<!-- jQuery -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-
-<!--Datatables -->
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
 <script>
-  $(document).ready(function() {
+$(document).ready( function () {
+    $('#example').DataTable({
+		"iDisplayLength": 100,
+		"order": [[ 2, 'asc' ]],
+        'ajax' : '../static/data.json',
+        'columns' : [
+            {'data' : 'title'},
+            {'data' : 'quantity'},
+            {'data' : 'price',
+                "render": function(data, type, row, meta){
+                    if(type === 'display'){
+                        data = "₹" + row.price ;
+                    }
+                    return data;
+                  }
+                },
+            {'data' : 'link',
+                'type' : 'num',
+                "render": function(data, type, row, meta){
+                    if(type === 'display' && row.link!="No link"){
+                        data = '<a href="https://' + row.link + '">' + "Link" + '</a>';
+                    }
 
-    var table = $('#example').DataTable({
-        responsive: true
-      })
-      .columns.adjust()
-      .responsive.recalc();
-  });
+                    return data;
+                  }
+                },
+        ]
+    });
+} );
+
 </script>
 
 
@@ -217,7 +247,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="app.js"></script>
+    <script src="../static/apps.js"></script>
 	
 </body>
 </html>

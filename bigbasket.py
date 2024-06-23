@@ -81,7 +81,7 @@ def productInfo(driver):
                 quantity = quantity_elem.text.strip() if quantity_elem else None
 
                 price_elem = multiple_variants.find('span', class_='Label-sc-15v1nk5-0 PackChanger___StyledLabel4-sc-newjpv-6 gJxZPQ ixfMcs')
-                price = price_elem.text.strip() if price_elem else None
+                price = price_elem.text.strip(" ₹") if price_elem else None
 
                 if quantity and price:
                     variant_dict = {'quantity': quantity, 'price': price}
@@ -106,7 +106,7 @@ def productInfo(driver):
             inner_div = outer_div.find('div', class_='Pricing___StyledDiv-sc-pldi2d-0')
             price_elem = inner_div.find('span', class_='Label-sc-15v1nk5-0 Pricing___StyledLabel-sc-pldi2d-1 gJxZPQ AypOi')
             if price_elem:
-                price = price_elem.text.strip()
+                price = price_elem.text.strip(" ₹")
             else:
                 print("Could not find the price element on the page.")
 
@@ -127,7 +127,7 @@ def productInfo(driver):
 
         with open("outputbig.json", "w", encoding="utf-8") as json_file:
             json.dump(product_data, json_file, ensure_ascii=False, indent=4)
-        driver.quit()
+    driver.quit()
 
 def BigCheckAvailability(pincode):
     global driver, addressBar, reAddressBar, unserviceableAddress
@@ -156,4 +156,12 @@ def BigCheckAvailability(pincode):
         print("Sorry for the inconvenience, BigBasket doesn't deliver at your location.")
         driver.quit()
     except (TimeoutException, NoSuchElementException):
-        print("Delivery available at your location, please enter the name of your desired product.")
+        print("Delivery available on BigBasket")
+
+#Manual input for testing
+if __name__ == "__main__":
+    print("running as main: ")
+    x=str(input("Pincode: "))
+    BigCheckAvailability(x)
+    y=str(input("search term: "))
+    bigSearch(y)

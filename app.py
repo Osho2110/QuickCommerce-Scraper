@@ -1,7 +1,10 @@
-from flask import Flask,render_template, request 
+from flask import Flask,render_template, request, url_for, jsonify
 import blinkit as bk
 import bigbasket as bb
+import dmart as dm
 import threading
+import os
+import json
 
 app = Flask(__name__,template_folder="templates") 
 
@@ -11,27 +14,62 @@ def hello():
 
 @app.route('/pincode_post', methods=['POST']) 
 def pincode_post():
-	global thread_a, thread_b
 	data = request.form.get('pin') 
 	p=str(data)
-	thread_a = threading.Thread(target=bk.BlinkCheckAvailability,args=(p,))
-	thread_b = threading.Thread(target=bb.BigCheckAvailability,args=(p,))
-	thread_a.start()
-	thread_b.start()
-	result = f"your data is {p}" 
-	return result 
+	thread_blinkp = threading.Thread(target=bk.BlinkCheckAvailability,args=(p,))
+	thread_bigp = threading.Thread(target=bb.BigCheckAvailability,args=(p,))
+	thread_dmp = threading.Thread(target=dm.DmartCheckAvailability,args=(p,))
+	thread_blinkp.start()
+	thread_bigp.start()
+	thread_dmp.start()
+	thread_bigp.join()
+	thread_blinkp.join()
+	thread_dmp.join()
+	 
+	return jsonify({"redirect": url_for('searchpage')})
+
+@app.route("/searchpage")
+def searchpage():
+	return render_template("search.html")
+
+@app.route("/resultpage", methods=['POST','GET'])
+def resultpage():
+	return render_template("list.html")
+
 
 @app.route('/searchbar', methods=['POST'])
 def searchbar():
-	global thread_a, thread_b, thread_c, thread_d
 	search = request.form.get('searchterm') 
 	s=str(search)
-	thread_c = threading.Thread(target=bk.blinkSearch,args=(s,))
-	thread_d = threading.Thread(target=bb.bigSearch,args=(s,))
-	thread_c.start()
-	thread_d.start()
-	result = f"your data is {s}" 
-	return result 
+	thread_blinks = threading.Thread(target=bk.blinkSearch,args=(s,))
+	thread_bigs = threading.Thread(target=bb.bigSearch,args=(s,))
+	thread_dms = threading.Thread(target=dm.dmartSearch,args=(s,))
+
+	thread_blinks.start()
+	thread_bigs.start()
+	thread_dms.start()
+	thread_blinks.join()
+	thread_bigs.join()
+	thread_dms.join()
+	print("Search complete")
+
+	
+	combined_file = "./static/data.json"
+	# Check if combined file exists
+	if os.path.exists(combined_file):
+		os.remove(combined_file)  # Clear existing data
+	combined_data = []
+	for filename in ["dmartOP.json", "output.json", "outputbig.json"]:
+		with open(filename, "r" , encoding="utf-8") as infile:
+			data = json.load(infile)
+			if isinstance(data, list):  # Handle list or single object
+				combined_data.extend(data)
+			else:
+				combined_data.append(data)
+	data = {"data": combined_data}
+	with open(combined_file, "w") as outfile:
+		json.dump(data, outfile, indent=4)  # Pretty-print for readability
+	return jsonify({"redirect": url_for('resultpage')})
 
 if __name__ == '__main__': 
-	app.run(debug=True)
+	app.run(debug=False, port=5000)

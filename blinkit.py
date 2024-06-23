@@ -68,7 +68,7 @@ def productInfo(driver):
             for variant_div in soup.find_all('div', style="cursor: pointer; display: flex; flex-direction: column; gap: 12px;"):
                 quantity = variant_div.find('div', class_='ProductVariantModal__ProductTitle-sc-7k6v9m-5').text.strip()
                 price_div = variant_div.find('div', class_='ProductVariantModal__Price-sc-7k6v9m-7')
-                price = price_div.text.strip() if price_div else "N/A"
+                price = price_div.text.strip(" ₹") if price_div else "N/A"
                 variant_dict = {'quantity': quantity, 'price': price}
                 variants.append(variant_dict)
 
@@ -94,12 +94,13 @@ def productInfo(driver):
             
             price_elem = product.find('div', style='color: rgb(31, 31, 31); font-weight: 600; font-size: 12px;')
             if price_elem:
-                price = price_elem.text.strip()
+                price = price_elem.text.strip(" ₹")
            
             else:
                 offer_price_elem = product.find('div', style='color: rgb(130, 130, 130); font-weight: 400; font-size: 12px; text-decoration-line: line-through;')
-                price = offer_price_elem.find_previous_sibling('div').text.strip() if offer_price_elem else "Price Not Found"
+                price = offer_price_elem.find_previous_sibling('div').text.strip(" ₹") if offer_price_elem else "Price Not Found"
             
+            variant_dict = {} 
             variant_dict["quantity"] = quantity
             variant_dict["price"] = price.encode("utf-8").decode()
             product_data.append(
@@ -110,10 +111,11 @@ def productInfo(driver):
                     "link": product_link,
                 }
             )
+        
 
     with open("output.json", "w", encoding="utf-8") as json_file:
         json.dump(product_data, json_file, ensure_ascii=False, indent=4)
-        driver.quit()
+    driver.quit()
         
 def BlinkCheckAvailability(pincode):
     global driver, addressBar, reAddressBar, unserviceableAddress
@@ -136,4 +138,12 @@ def BlinkCheckAvailability(pincode):
         print("Sorry for the inconvenience, Blinkit doesn't deliver at your location.")
         driver.quit()
     except (TimeoutException, NoSuchElementException):
-        print("Delivery available at your location, please enter the name of your desired product.")
+        print("Delivery available on blinkit")
+
+#Manual input for testing
+if __name__ == "__main__":
+    print("running as main: ")
+    x=str(input("Pincode: "))
+    BlinkCheckAvailability(x)
+    y=str(input("search term: "))
+    blinkSearch(y)
