@@ -29,12 +29,18 @@ Mercury is an Indian quick-commerce scraper which scrapes real-time prices of pr
 ```bash
 pip install -r requirements.txt
 ```
-3. Run `app.py` by running ```python app.py```
-4. Open `localhost:5000` on your browser or follow the link in the output terminal window
-5. Enter pincode on the website.
-6. Wait untill availablity of services is verified.
-7. Enter your search term in the searchbar.
-8. Wait untill data is fetched.
-9. The final output will be displayed as a datatables table, already sorted by price.
+
+3. Run `Run_Mercury.bat`. The site should open in a new browser window.
+4. Enter pincode on the website.
+5. Wait untill availablity of services is verified.
+6. Enter your search term in the searchbar.
+7. Wait untill data is fetched.
+8. The final output will be displayed as a datatables table, already sorted by price.
 
 ###Troubleshooting
+**1. Browser window does not open automatically when ```Run_Mercury.bat``` is run.**
+- This may occur because the webbrowser library may not have recognised your browser.
+Manually open ```localhost:*port_num*``` where ```port_num``` is the value of ```SetPort``` variable in app.py (5000 by default)
+
+**2. Website does not load or connection gets timed out.**
+- This usually occurs because the server may not have started properly. To solve this, change the ```SetPort``` variable in app.py to change the port and re-run the code.

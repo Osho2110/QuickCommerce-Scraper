@@ -3,10 +3,19 @@ import blinkit as bk
 import bigbasket as bb
 import dmart as dm
 import threading
+import webbrowser
+import time
 import os
 import json
 
+#Change Port Number here
+SetPort=5000
+
 app = Flask(__name__,template_folder="templates") 
+
+def open_browser(SetPort):
+	time.sleep(1)
+	webbrowser.open_new(f"http://localhost:{SetPort}")
 
 @app.route("/") 
 def hello(): 
@@ -72,4 +81,5 @@ def searchbar():
 	return jsonify({"redirect": url_for('resultpage')})
 
 if __name__ == '__main__': 
-	app.run(debug=False, port=5000)
+	threading.Thread(target=open_browser, args=(SetPort,)).start()
+	app.run(debug=False, port=SetPort)

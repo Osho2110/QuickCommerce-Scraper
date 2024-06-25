@@ -106,6 +106,7 @@ def productInfo(driver):
     
     with open("dmartOP.json", "w", encoding="utf-8") as json_file:
         json.dump(product_data, json_file, ensure_ascii=False, indent=4)   
+    driver.quit()
 
 
 def DmartCheckAvailability(pincode):
